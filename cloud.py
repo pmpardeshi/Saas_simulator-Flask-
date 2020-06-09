@@ -6,7 +6,7 @@ import shutil
 
 
 app= Flask(__name__)
-app.config['UPLOAD_FOLDER']='static'
+app.config['UPLOAD_FOLDER']='uploaded'
 app.config['SECRET_KEY']='377959898262d5bd73edcd7992e8ca35'
 bufferSize = 64 * 1024
 password = "3edcp7992ezca3k"
