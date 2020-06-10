@@ -7,110 +7,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="refresh" content=180>
 
+
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
+
+    <style type="text/css">
+      
+      .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 30px; /* Set the fixed height of the footer here */
+        line-height: 30px; /* Vertically center the text there */
+        
+      }
+
+    </style>
+
 
     <title>Saas Cloud</title>
+
   </head>
-  <body>
-<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
-   <h3>Cloud Computing Mini Project</h3>
+  <body >
+    <div class='sticky-top' style="width:100%">  
+      <nav class="navbar navbar-dark bg-dark">
 
+        <a class="navbar-brand" href="#">Saas_demo</a>
+        <form class="form-inline" action='/uploader' method='post' enctype="multipart/form-data" >
+        
+          <input class="form-control mr-sm-2 " type="file" onchange='form.submit()' name='fl1' id='fl1' required='true' multiple='true' style="display:none;"/>
+          <label for="fl1"  class="btn  btn-primary my-2 my-sm-0">Upload Files Here</label>
 
-  <form class="form-inline md-form" action='/uploader' method='post' enctype="multipart/form-data">
+        </form>
+          
+      </nav>
+      
+      <div class="container-fluid pt-2 pb-2 bg-light">
+
+        <span>storage({{percent_full}}% full)</span>
+        <div class="progress" id="bar2">
+          <div id='progress-bar' class="progress-bar progress-bar-default" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:{{percent_full}}%">
+          </div>
+        </div>
+        <!--label for='bar2' class="text-muted mt-1">{{ total_size }} MB / 400 MB used</label-->
+        
+        <small class="text-muted mt-1">{{ total_size }} MB / 400 MB used</small>
+        
+      </div>
+
+      
     
-    <input class="form-control mr-sm-2 custom-file" type="file" placeholder="Select file" name='fl1' id='fl1' required >
-    <button class="btn  btn-primary" type="submit">upload</button>
-  </form>
-</nav>
- 
-<div class="container-fluid mt-4 mb-4">
+      <div class='flashwrapper'>
+        {% with messages = get_flashed_messages(with_categories=true)%}
+          {% if messages %}
+            {% for category , message in messages %}
 
-   <h4>storage({{percent_full}}% full)</h4>
-   <div class="progress" id="bar2">
-    <div  class="progress-bar progress-bar-default" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:{{percent_full}}%">
-   </div>
-  </div>
-  <small class="text-muted">{{ total_size }} MB / 350 MB used</small>
-</div>
-
- <small class="text-muted m-4">This Website uses AES256-CBC to encrypt/decrypt files.
- To remove Decrypted files from buffer, Page reloads after every 180 secs. It ensures maximum Safety
-  </small>
-
-
-  {% with messages = get_flashed_messages(with_categories=true)%}
-    {% if messages %}
-      {% for category , message in messages %}
-
-                <div class="alert alert-{{ category }}">
-                  {{ message }}
-                </div>
+              <div id='flashwrapper'class="alert alert-{{ category }} alert-dismissible" role='alert'>
+                        {{ message }}
+                <button type=button class=close data-dismiss='alert' onclick="close('flashwrapper')" />
                 
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-  
-      <div class="table-responsive">
-        <table class="table  table-sm">
-          <thead>
-             <tr class="d-flex text-center">
-                <th class="col-1">#</th>
-                <th class="col-3">File</th>
-                <th class="col-2">Size</th>
-                <th class="col-2">view</th>
-                <th class="col-2">Download</th>
-                <th class="col-2">Delete</th>
-              </tr>
-            
-          </thead>
-         
-          <tbody>
-            {% for sr,detail in file_list.items() %}    
-   
-              <tr class="d-flex text-center">
+              </div>
+                      
 
-                  <td class="col-1">{{ sr }}</td>
-                  <td class="col-3">{{ detail[0] }}</td>
-                  <td class="col-2">{{ detail[1] }} &nbsp {{ detail[2]}} </td>
-                  
-                  <td class="col-2 btn-outline-primary card">
-
-                    <a href="{{url_for('view_file',task=0,fname=detail[0])}}" target='blank' class='stretched-link btn-outline-primary'>
-                    <svg class="bi bi-display" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5.75 13.5c.167-.333.25-.833.25-1.5h4c0 .667.083 1.167.25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75z"/>
-                      <path fill-rule="evenodd" d="M13.991 3H2c-.325 0-.502.078-.602.145a.758.758 0 0 0-.254.302A1.46 1.46 0 0 0 1 4.01V10c0 .325.078.502.145.602.07.105.17.188.302.254a1.464 1.464 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.758.758 0 0 0 .254-.302 1.464 1.464 0 0 0 .143-.538L15 9.99V4c0-.325-.078-.502-.145-.602a.757.757 0 0 0-.302-.254A1.46 1.46 0 0 0 13.99 3zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"/>
-                    </svg>
-                    </a>
-                  </td>
-                
-                  <td class="col-2 btn-outline-success card">
-                   <a href="{{url_for('view_file',task=1,fname=detail[0])}}" class='stretched-link btn-outline-success'>
-                    <svg class="bi bi-box-arrow-in-down " width="1em" height="1em" viewBox="0 0 16 16" fill="     currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M4.646 8.146a.5.5 0 0 1 .708 0L8 10.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
-                      <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9A.5.5 0 0 1 8 1z"/>
-                      <path fill-rule="evenodd" d="M1.5 13.5A1.5 1.5 0 0 0 3 15h10a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 13 4h-1.5a.5.5 0 0 0 0 1H13a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5v-8A.5.5 0 0 1 3 5h1.5a.5.5 0 0 0 0-1H3a1.5 1.5 0 0 0-1.5 1.5v8z"/>
-                    </svg>
-                  </a>
-                  </td>
-
-                  <td class="col-2 btn-outline-danger card">
-                    
-                     <a href="{{url_for('delete_file',fname=detail[0])}}" class='stretched-link btn-outline-danger'>
-                    <svg class="bi bi-trash " width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                      <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                    </svg>
-                    </a>
-                 
-                  </td>
-                </tr>
             {% endfor %}
-          </tbody>
-        </table>
+          {% endif %}
+        {% endwith %}
+      </div>
 
- </div> 
+      <div class='container-fluid'>
+        <div class="row text-center">
+                <!--tr class="d-flex text-center"-->
+          <div class="col-1 card ">#</div>
+          <div class="col-6 card">File</div>
+          <div class="col-2 card">Size</div>
+          <div class="col-1 card">view</div>
+          <div class="col-1 card">Download</div>
+          <div class="col-1 card ">Delete</div>
+        </div>
+      </div>  
+    </div>
 
+    <div class='text-center container-fluid' >
+
+      {% for sr,detail in file_list.items() %}   
+
+        <div class="row">
+
+          <div class="col-1 card">
+            {{ sr }}
+          </div>
+          <div class="col-6 card">
+            {{ detail[0] }}
+          </div>
+          <div class="col-2 card">
+            {{ detail[1] }} &nbsp {{ detail[2]}} 
+          </div>
+                    
+          <div class="col-1 btn-outline-primary card">
+
+            <a href="{{url_for('view_file',task=0,fname=detail[0])}}" target='blank' class='stretched-link btn-outline-primary' role='button'>
+      
+              <svg class="bi bi-display" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.75 13.5c.167-.333.25-.833.25-1.5h4c0 .667.083 1.167.25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75z"/>
+                <path fill-rule="evenodd" d="M13.991 3H2c-.325 0-.502.078-.602.145a.758.758 0 0 0-.254.302A1.46 1.46 0 0 0 1 4.01V10c0 .325.078.502.145.602.07.105.17.188.302.254a1.464 1.464 0 0 0 .538.143L2.01 11H14c.325 0 .502-.078.602-.145a.758.758 0 0 0 .254-.302 1.464 1.464 0 0 0 .143-.538L15 9.99V4c0-.325-.078-.502-.145-.602a.757.757 0 0 0-.302-.254A1.46 1.46 0 0 0 13.99 3zM14 2H2C0 2 0 4 0 4v6c0 2 2 2 2 2h12c2 0 2-2 2-2V4c0-2-2-2-2-2z"/>
+              </svg>
+            </a>
+          </div>
+                  
+          <div class="col-1 btn-outline-success card">
+            <a href="{{url_for('view_file',task=1,fname=detail[0])}}" class='stretched-link btn-outline-success' role='button'>
+              <svg class="bi bi-box-arrow-in-down " width="1em" height="1em" viewBox="0 0 16 16" fill="     currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M4.646 8.146a.5.5 0 0 1 .708 0L8 10.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9A.5.5 0 0 1 8 1z"/>
+                <path fill-rule="evenodd" d="M1.5 13.5A1.5 1.5 0 0 0 3 15h10a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 13 4h-1.5a.5.5 0 0 0 0 1H13a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5v-8A.5.5 0 0 1 3 5h1.5a.5.5 0 0 0 0-1H3a1.5 1.5 0 0 0-1.5 1.5v8z"/>
+              </svg>
+            </a>
+          </div>
+
+          <div class="col-1 btn-outline-danger card">
+                      
+            <a href="{{url_for('delete_file',fname=detail[0])}}" class='stretched-link btn-outline-danger' role='button'>
+              <svg class="bi bi-trash " width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+               <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+              </svg>
+            </a>
+                   
+          </div>
+        </div> 
+
+      {% endfor %}
+       
+      
+    </div>
+    <footer class="footer bg-secondary" style='flex-shrink:0;'>
+      <div class="container text-center">
+        <small class='text-white'>This Website uses AES256-CBC Encryption.To remove Decrypted files from buffer, Page reloads after every 180 secs. It ensures maximum Safety
+        </small>
+      </div>
+    </footer>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
