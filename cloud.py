@@ -25,9 +25,14 @@ def get_files_info():
 			f_path=os.path.join(path,file)
 			size=os.path.getsize(f_path)/1000000
 			total_size+=size
+			
 			if size<1:
-				size=round(size*1000,2)
+				size*=1000
 				unit='KB'
+				if size<1:
+					size*=1000
+					unit='B'
+			size=round(size,2)
 			file_list[i]=[file,size,unit]
 			i+=1
 
@@ -40,12 +45,14 @@ def get_files_info():
 @app.route("/uploader",methods=['GET','POST'])
 def save_file():
 	if(request.method == 'POST'):
-		f=request.files['fl1']
-		f_path=os.path.join(app.config['UPLOAD_FOLDER'],f.filename)
-		f.save(f_path)
-		pyAesCrypt.encryptFile(f_path, f"{f_path}.aes", password, bufferSize)
-		flash(f'{f.filename} is uploaded ',category='success')
-		os.remove(f_path)
+		sentfiles=request.files.getlist('fl1')
+		for file in sentfiles:
+			path=os.path.join(app.config['UPLOAD_FOLDER'],file.filename)
+			file.save(path)
+			pyAesCrypt.encryptFile(path, f"{path}.aes", password, bufferSize)
+			os.remove(path)
+
+		flash(f'Total files uploaded : {len(sentfiles)} ',category='success')
 	return redirect(url_for('home'))
 	
 
